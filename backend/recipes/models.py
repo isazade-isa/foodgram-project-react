@@ -1,6 +1,6 @@
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 User = get_user_model()
@@ -8,20 +8,22 @@ User = get_user_model()
 
 class Tag(models.Model):
     """
-    Модель тегов.
+    Модель т'гов.
     """
     name = models.CharField(
+        'Название тега',
+        unique=True,
         max_length=200,
-        verbose_name='Название тега',
         db_index=True
     )
     color = ColorField(
-        format='hex',
-        verbose_name='HEX-код цвета'
+        verbose_name='HEX-код цвета',
+        unique=True,
+        format='hex'
     )
     slug = models.SlugField(
-        max_length=200,
         verbose_name='Slug',
+        max_length=200,
         unique=True
     )
 
@@ -34,14 +36,17 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
+    """
+    Модель ингридиентов.
+    """
     name = models.CharField(
+        'Название ингредиента',
         max_length=250,
-        verbose_name='Название ингредиента',
         db_index=True
     )
     measurement_unit = models.CharField(
-        max_length=200,
-        verbose_name='Единица измерения'
+        'Единица измерения',
+        max_length=200
     )
 
     class Meta:
@@ -54,7 +59,7 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     """
-    Моодель рецептов.
+    Модель рецептов.
     """
     author = models.ForeignKey(
         User,
@@ -62,16 +67,17 @@ class Recipe(models.Model):
         verbose_name='Автор рецепта'
     )
     name = models.CharField(
-        verbose_name='Название рецепта',
+        'Название рецепта',
         max_length=200
     )
     image = models.ImageField(
-        blank=True,
-        verbose_name='Фото',
+        'Фото',
+        blank=False,
         upload_to='recipes/images'
     )
     text = models.TextField(
-        verbose_name='Описание рецепта'
+        'Описание рецепта',
+        max_length=1000
     )
     ingredients = models.ManyToManyField(
         Ingredient,
@@ -85,7 +91,8 @@ class Recipe(models.Model):
     )
     cooking_time = models.PositiveSmallIntegerField(
         validators=[
-            MinValueValidator(1, 'Не менее 1')
+            MinValueValidator(1, 'Не менее 1'),
+            MaxValueValidator(120, 'Не менее 120')
         ],
         verbose_name='Время приготовления, мин.'
     )
@@ -117,9 +124,12 @@ class IngredientRecipe(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Рецепт'
     )
-    amount = models.IntegerField(
+    amount = models.PositiveSmallIntegerField(
         default=1,
-        validators=[MinValueValidator(1)],
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(50)
+        ],
         verbose_name='Количество ингредиента'
     )
 
@@ -141,6 +151,9 @@ class IngredientRecipe(models.Model):
 
 
 class Favorite(models.Model):
+    """
+    Модель избранных в рецептов.
+    """
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -165,6 +178,9 @@ class Favorite(models.Model):
 
 
 class Cart(models.Model):
+    """
+    Модель рецептов в корзине.
+    """
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,

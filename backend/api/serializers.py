@@ -125,10 +125,10 @@ class CreateIngredientRecipeSerializer(ModelSerializer):
         )
 
     def validate_amount(self, data):
-        if int(data) < 1:
+        if int(data) <= 0:
             raise ValidationError({
                 'ingredients': (
-                    'Количество должно быть больше 1'
+                    'Количество должно быть больше 0'
                 ),
                 'msg': data
             })
@@ -164,7 +164,7 @@ class CreateRecipeSerializer(ModelSerializer):
             ) for ingredient in ingredients
         ])
 
-    def validate(self, data):
+    def validate_ingredients(self, data):
         ingredients = self.initial_data.get('ingredients')
         ingredients_list = []
         for ingredient in ingredients:
@@ -174,10 +174,19 @@ class CreateRecipeSerializer(ModelSerializer):
                     'Есть задублированные ингредиенты!'
                 )
             ingredients_list.append(ingredient_id)
-        if data['cooking_time'] <= 0:
+        return data
+
+    def validate_cooking(self, data):
+        if int(data['cooking_time']) <= 0:
             raise ValidationError(
                 'Время приготовления должно быть больше 0!'
             )
+        return data
+
+    def validate_tags(self, data):
+        if not data['tags']:
+            raise ValidationError(
+                'Нужен хотя бы один тег для рецепта!')
         return data
 
     @atomic
@@ -193,7 +202,6 @@ class CreateRecipeSerializer(ModelSerializer):
         recipe.tags.set(tags)
         return recipe
 
-    # да, теги сохраняются
     @atomic
     def update(self, instance, validated_data):
         ingredients = validated_data.pop('ingredients')
@@ -219,12 +227,12 @@ class RecipeShortInfo(ModelSerializer):
 
 class CartSerializer(ModelSerializer):
     class Meta:
-        fields = ['recipe', 'user']
+        fields = ('recipe', 'user')
         model = Cart
 
     def validate(self, data):
         request = self.context.get('request')
-        recipe = data['recipe']
+        recipe = data.get('recipe')
         if Cart.objects.filter(
             user=request.user, recipe=recipe
         ).exists():
@@ -248,7 +256,7 @@ class FavoriteSerializer(ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        recipe = data['recipe']
+        recipe = data.get('recipe')
         if Favorite.objects.filter(user=request.user, recipe=recipe).exists():
             raise ValidationError({
                 'errors': 'Уже есть в избранном.'
@@ -305,13 +313,13 @@ class FollowSerializer(ModelSerializer):
 
     def validate(self, data):
         get_object_or_404(User, username=data['author'])
-        if self.context['request'].user == data['author']:
+        if self.context.get('request').user == data.get('author'):
             raise ValidationError({
-                'errors': 'Ты не пожешь подписаться на себя.'
+                'errors': 'Нельзя подписаться на себя.'
             })
         if Follow.objects.filter(
-                user=self.context['request'].user,
-                author=data['author']
+                user=self.context.get('request').user,
+                author=data.get('author')
         ):
             raise ValidationError({
                 'errors': 'Уже подписан.'
