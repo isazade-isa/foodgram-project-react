@@ -7,6 +7,7 @@ from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
 from .filters import IngredientSearchFilter, RecipeFilterSet
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
@@ -117,7 +118,9 @@ class RecipeViewSet(ModelViewSet):
     #     html = HTML(string=html_template)
     #     result = html.write_pdf()
     #     response = HttpResponse(result, content_type='application/pdf;')
-    #     response['Content-Disposition'] = 'inline; filename=shopping_list.pdf'
+    #     response[
+        # 'Content-Disposition'
+        # ] = 'inline; filename=shopping_list.pdf'
     #     response['Content-Transfer-Encoding'] = 'binary'
     #     return response
 
