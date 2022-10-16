@@ -4,8 +4,6 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN apt update && \
-    apt upgrade -y && \
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt --no-cache-dir
 
