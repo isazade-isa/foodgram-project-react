@@ -16,7 +16,7 @@ DEBUG = os.getenv('DEBUG_ENV')
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '51.250.98.235',
+    '158.160.10.255',
     'isaev.hopto.org'
 ]
 
