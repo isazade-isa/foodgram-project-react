@@ -8,9 +8,6 @@ from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from recipes.models import (Cart, Favorite, Ingredient, Recipe, Tag)
-from users.models import Follow, User
-
 from .filters import IngredientSearchFilter, RecipeFilterSet
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
@@ -18,6 +15,9 @@ from .serializers import (CartSerializer, CreateRecipeSerializer,
                           FavoriteSerializer, FollowListSerializer,
                           FollowSerializer, IngredientSerializer,
                           RecipeSerializer, TagSerializer)
+
+from recipes.models import (Cart, Favorite, Ingredient, Recipe, Tag)
+from users.models import Follow, User
 
 
 class UsersViewSet(UserViewSet):
