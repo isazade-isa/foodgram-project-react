@@ -1,3 +1,5 @@
+![workflow](https://github.com/isazade-isa/foodgram-project-react/actions/workflows/final.yml/badge.svg)
+
 ## Описание проекта
 
 # Foodgram - «Продуктовый помощник»
