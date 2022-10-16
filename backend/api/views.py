@@ -15,8 +15,8 @@ from .serializers import (CartSerializer, CreateRecipeSerializer,
                           FavoriteSerializer, FollowListSerializer,
                           FollowSerializer, IngredientSerializer,
                           RecipeSerializer, TagSerializer)
-from recipes.models import (Cart, Favorite, Ingredient, Recipe, Tag)
 from users.models import Follow, User
+from recipes.models import (Cart, Favorite, Ingredient, Recipe, Tag)
 
 
 class UsersViewSet(UserViewSet):
