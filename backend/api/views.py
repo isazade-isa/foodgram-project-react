@@ -11,13 +11,13 @@ from rest_framework.viewsets import ModelViewSet
 from .filters import IngredientSearchFilter, RecipeFilterSet
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
-from .serializers import (
-    CartSerializer, CreateRecipeSerializer, FavoriteSerializer,
-    FollowListSerializer, FollowSerializer, IngredientSerializer,
-    RecipeSerializer, TagSerializer
-)
-from users.models import Follow, User
+from .serializers import (CartSerializer, CreateRecipeSerializer,
+                          FavoriteSerializer, FollowListSerializer,
+                          FollowSerializer, IngredientSerializer,
+                          RecipeSerializer, TagSerializer)
+
 from recipes.models import (Cart, Favorite, Ingredient, Recipe, Tag)
+from users.models import Follow, User
 
 
 class UsersViewSet(UserViewSet):
