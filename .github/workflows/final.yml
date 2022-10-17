@@ -49,7 +49,7 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram:latest
-          file: backend/Dockerfile
+          context: backend/
           no-cache: true
 
       - name: Push frontend to Docker Hub
@@ -57,7 +57,7 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
-          file: frontend/Dockerfile
+          context: frontend/
           no-cache: true
 
   deploy:
