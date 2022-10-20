@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Tag(models.Model):
     """
-    Модель т'гов.
+    Модель тeгов.
     """
     name = models.CharField(
         'Название тега',

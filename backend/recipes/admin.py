@@ -20,7 +20,7 @@ class IngredientRecipeInline(admin.TabularInline):
 
 class TagAdmin(BaseAdminSettings):
     """
-    Кастомизация админ панели (управление тегам).
+    Кастомизация админ панели (управление тегами).
     """
     list_display = (
         'name',
@@ -90,7 +90,7 @@ class FavoriteAdmin(admin.ModelAdmin):
 
 class CartAdmin(admin.ModelAdmin):
     """
-    Кастомизация админ панели (управление избранных рецептов).
+    Кастомизация админ панели (управление рецептов в корзине).
     """
     list_display = ('recipe', 'user')
     list_filter = ('recipe', 'user')
