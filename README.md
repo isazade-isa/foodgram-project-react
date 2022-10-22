@@ -10,13 +10,13 @@
 
 ## Запуск проекта с помощью Docker
 
-1. Склонируйте репозиторий на локальную машину.
+1. Склонируйте репозиторий.
 
    ```
    git clone git@github.com:isazade-isa/foodgram-project-react.git
    ```
 
-2. Создайте .env файл в директории backend/foodgram/, в котором должны содержаться следующие переменные для подключения к базе PostgreSQL:
+2. Создайте .env файл в директории backend/foodgram/ , в котором должны содержаться следующие переменные для подключения к базе PostgreSQL:
 
    ```
    DB_ENGINE=django.db.backends.postgresql
@@ -28,21 +28,17 @@
    ```
 
 3. Перейдите в директорию infra/ и выполните команду для создания и запуска контейнеров.
-   `sudo docker compose up -d --build`
-   > Возможна команда **$ sudo docker-compose up -d --build** (зависит от версии docker compose)
-
-> В Windows команда выполняется без **sudo**
-
-4. В контейнере backend выполните миграции, создайте суперпользователя и соберите статику.
 
    ```
-   sudo docker compose exec backend python manage.py migrate
-   sudo docker compose exec backend python manage.py createsuperuser
-   sudo docker compose exec backend python manage.py collectstatic --no-input
+   sudo docker compose up -d --build
    ```
 
-5. Загрузите в бд ингредиенты командой ниже.
+4. Войдите в контейнер backend и внутри выполните миграции, создайте суперпользователя, соберите статику и загрузите в бд ингредиенты.
 
    ```
-   sudo docker compose exec backend python manage.py load_ingredients
+   sudo docker exec -it <container_ID> bash
+   python manage.py migrate
+   python manage.py createsuperuser
+   python manage.py collectstatic --no-input
+   python manage.py load_ingredients
    ```
