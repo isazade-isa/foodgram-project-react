@@ -42,3 +42,5 @@
    python manage.py collectstatic --no-input
    python manage.py load_ingredients
    ```
+
+ReDoc --- http://isaev.hopto.org/api/docs/redoc.html
