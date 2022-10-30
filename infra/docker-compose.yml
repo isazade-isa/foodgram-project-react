@@ -21,7 +21,7 @@ services:
 
   frontend:
     build:
-      context: ../frontend
+      context: ../isa_backend/foodgram-project-react/frontend
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
