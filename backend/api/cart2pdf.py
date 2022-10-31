@@ -1,30 +1,31 @@
-from django.db.models import F, Sum
+from django.db.models import Sum
+from recipes.models import IngredientInRecipe
 from django.http import HttpResponse
-from django.template.loader import render_to_string
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
-from weasyprint import HTML
-
-from recipes.models import IngredientRecipe
+from datetime import datetime
 
 
-@action(
-    detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
-)
-def download_shopping_cart(self, request):
-    shopping_list = IngredientRecipe.objects.filter(
-        recipe__cart__user=request.user
+def download_shopping_cart(user, request):
+    ingredients = IngredientInRecipe.objects.filter(
+        recipe__shopping_cart__user=request.user
     ).values(
-        name=F('ingredient__name'),
-        measurement_unit=F('ingredient__measurement_unit')
-    ).annotate(amount=Sum('amount')).values_list(
-        'ingredient__name', 'amount', 'ingredient__measurement_unit'
+        'ingredient__name',
+        'ingredient__measurement_unit'
+    ).annotate(amount=Sum('amount'))
+    today = datetime.today()
+    shopping_list = (
+        f'Список покупок для: {user.get_full_name()}\n\n'
+        f'Дата: {today:%Y-%m-%d}\n\n'
     )
-    html_template = render_to_string('recipes/pdf_template.html',
-                                     {'ingredients': shopping_list})
-    html = HTML(string=html_template)
-    result = html.write_pdf()
-    response = HttpResponse(result, content_type='application/pdf;')
-    response['Content-Disposition'] = 'inline; filename=shopping_list.pdf'
-    response['Content-Transfer-Encoding'] = 'binary'
+    shopping_list += '\n'.join([
+        f'- {ingredient["ingredient__name"]} '
+        f'({ingredient["ingredient__measurement_unit"]})'
+        f' - {ingredient["amount"]}'
+        for ingredient in ingredients
+    ])
+    shopping_list += f'\n\nFoodgram ({today:%Y})'
+
+    filename = f'{user.username}_shopping_list.txt'
+    response = HttpResponse(shopping_list, content_type='text/plain')
+    response['Content-Disposition'] = f'attachment; filename={filename}'
+
     return response
