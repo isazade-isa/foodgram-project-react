@@ -1,4 +1,3 @@
-from urllib import response
 from django.db.models import F, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -12,7 +11,6 @@ from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-# from .cart2pdf import download_shopping_cart
 from .filters import IngredientSearchFilter, RecipeFilterSet
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
@@ -20,7 +18,8 @@ from .serializers import (CartSerializer, CreateRecipeSerializer,
                           FavoriteSerializer, FollowListSerializer,
                           FollowSerializer, IngredientSerializer,
                           RecipeSerializer, TagSerializer)
-from recipes.models import Cart, Favorite, Ingredient, IngredientRecipe, Recipe, Tag
+from recipes.models import (Cart, Favorite, Ingredient,
+                            IngredientRecipe, Recipe, Tag)
 from users.models import Follow, User
 from weasyprint import HTML
 
