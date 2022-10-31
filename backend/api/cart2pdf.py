@@ -1,8 +1,6 @@
 from django.db.models import F, Sum
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 from weasyprint import HTML
 
 from recipes.models import IngredientRecipe
