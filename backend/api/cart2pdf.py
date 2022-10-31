@@ -1,12 +1,17 @@
 from django.db.models import F, Sum
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from weasyprint import HTML
 
 from recipes.models import IngredientRecipe
 
 
-def cart2pdf(self, request):
+@action(
+    detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
+)
+def download_shopping_cart(self, request):
     shopping_list = IngredientRecipe.objects.filter(
         recipe__cart__user=request.user
     ).values(
@@ -22,4 +27,4 @@ def cart2pdf(self, request):
     response = HttpResponse(result, content_type='application/pdf;')
     response['Content-Disposition'] = 'inline; filename=shopping_list.pdf'
     response['Content-Transfer-Encoding'] = 'binary'
-    return shopping_list
+    return response

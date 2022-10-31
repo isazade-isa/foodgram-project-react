@@ -8,7 +8,6 @@ from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from .cart2pdf import cart2pdf
 from .filters import IngredientSearchFilter, RecipeFilterSet
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
@@ -113,11 +112,9 @@ class RecipeViewSet(ModelViewSet):
             request=request, pk=pk, model=Favorite)
 
     @action(
-        detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
-    )
-    def download_shopping_cart(self, request):
-        return cart2pdf
-
+    detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
+)
+def download_shopping_cart(self, request):
 
 class IngredientViewSet(ModelViewSet):
     queryset = Ingredient.objects.all()
