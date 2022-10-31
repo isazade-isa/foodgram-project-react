@@ -43,4 +43,6 @@
    python manage.py load_ingredients
    ```
 
-ReDoc --- http://isaev.hopto.org/api/docs/redoc.html
+Проект доступен: isaev.hopto.org
+e-mail: admin2@admin.ru
+password: admin987654
