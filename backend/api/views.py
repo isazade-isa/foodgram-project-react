@@ -8,6 +8,7 @@ from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from .cart2pdf import download_shopping_cart
 from .filters import IngredientSearchFilter, RecipeFilterSet
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
@@ -110,6 +111,12 @@ class RecipeViewSet(ModelViewSet):
     def delete_favorite(self, request, pk):
         return self.delete_method_for_actions(
             request=request, pk=pk, model=Favorite)
+
+    @action(
+        detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
+    )
+    def download_shopping_cart(self, request):
+        return download_shopping_cart()
 
 
 class IngredientViewSet(ModelViewSet):
