@@ -1,7 +1,8 @@
 from django.db.models import Sum
-from recipes.models import IngredientInRecipe
 from django.http import HttpResponse
 from datetime import datetime
+
+from recipes.models import IngredientInRecipe
 
 
 def download_shopping_cart(user, request):
