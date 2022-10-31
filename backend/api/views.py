@@ -10,6 +10,7 @@ from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from weasyprint import HTML
 
 from .filters import IngredientSearchFilter, RecipeFilterSet
 from .pagination import CustomPagination
@@ -18,10 +19,9 @@ from .serializers import (CartSerializer, CreateRecipeSerializer,
                           FavoriteSerializer, FollowListSerializer,
                           FollowSerializer, IngredientSerializer,
                           RecipeSerializer, TagSerializer)
-from recipes.models import (
-    Cart, Favorite, Ingredient, IngredientRecipe, Recipe, Tag)
+from recipes.models import (Cart, Favorite, Ingredient, IngredientRecipe,
+                            Recipe, Tag)
 from users.models import Follow, User
-from weasyprint import HTML
 
 
 class UsersViewSet(UserViewSet):
