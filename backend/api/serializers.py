@@ -183,11 +183,11 @@ class CreateRecipeSerializer(ModelSerializer):
             )
         return data
 
-    def validate_tags(self, data):
-        if not int(data['tags']):
-            raise ValidationError(
-                'Нужен хотя бы один тег для рецепта!')
-        return data
+    # def validate_tags(self, data):
+    #     if not int(data['tags']):
+    #         raise ValidationError(
+    #             'Нужен хотя бы один тег для рецепта!')
+    #     return data
 
     @atomic
     def create(self, validated_data):
