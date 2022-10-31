@@ -3,11 +3,11 @@ from datetime import datetime
 from django.db.models import Sum
 from django.http import HttpResponse
 
-from recipes.models import IngredientInRecipe
+from recipes.models import IngredientRecipe
 
 
 def download_shopping_cart(user, request):
-    ingredients = IngredientInRecipe.objects.filter(
+    ingredients = IngredientRecipe.objects.filter(
         recipe__shopping_cart__user=request.user
     ).values(
         'ingredient__name',
