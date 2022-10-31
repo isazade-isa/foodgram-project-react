@@ -112,9 +112,6 @@ class RecipeViewSet(ModelViewSet):
         return self.delete_method_for_actions(
             request=request, pk=pk, model=Favorite)
 
-    @action(
-        detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
-    )
     def download_shopping_cart(self, request):
         return download_shopping_cart()
 
