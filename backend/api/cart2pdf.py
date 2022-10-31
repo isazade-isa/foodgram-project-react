@@ -8,10 +8,7 @@ from weasyprint import HTML
 from recipes.models import IngredientRecipe
 
 
-@action(
-    detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
-)
-def download_shopping_cart(self, request):
+def cart2pdf(self, request):
     shopping_list = IngredientRecipe.objects.filter(
         recipe__cart__user=request.user
     ).values(
@@ -27,4 +24,4 @@ def download_shopping_cart(self, request):
     response = HttpResponse(result, content_type='application/pdf;')
     response['Content-Disposition'] = 'inline; filename=shopping_list.pdf'
     response['Content-Transfer-Encoding'] = 'binary'
-    return response
+    return shopping_list
