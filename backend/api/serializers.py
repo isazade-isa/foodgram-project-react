@@ -184,7 +184,7 @@ class CreateRecipeSerializer(ModelSerializer):
         return data
 
     def validate_tags(self, data):
-        if not data['tags']:
+        if not int(data['tags']):
             raise ValidationError(
                 'Нужен хотя бы один тег для рецепта!')
         return data
