@@ -18,8 +18,8 @@ from .serializers import (CartSerializer, CreateRecipeSerializer,
                           FavoriteSerializer, FollowListSerializer,
                           FollowSerializer, IngredientSerializer,
                           RecipeSerializer, TagSerializer)
-from recipes.models import (Cart, Favorite, Ingredient,
-                            IngredientRecipe, Recipe, Tag)
+from recipes.models import (
+    Cart, Favorite, Ingredient, IngredientRecipe, Recipe, Tag)
 from users.models import Follow, User
 from weasyprint import HTML
 
