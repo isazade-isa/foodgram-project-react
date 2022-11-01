@@ -106,16 +106,6 @@ class RecipeViewSet(ModelViewSet):
         return self.delete_method_for_actions(
             request=request, pk=pk, model=Cart)
 
-    @action(detail=True, methods=['post'])
-    def favorite(self, request, pk):
-        return self.post_method_for_actions(
-            request=request, pk=pk, serializers=FavoriteSerializer)
-
-    @favorite.mapping.delete
-    def delete_favorite(self, request, pk):
-        return self.delete_method_for_actions(
-            request=request, pk=pk, model=Favorite)
-
     @action(
         detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
     )
@@ -136,6 +126,16 @@ class RecipeViewSet(ModelViewSet):
         response['Content-Disposition'] = 'inline; filename=shopping_list.pdf'
         response['Content-Transfer-Encoding'] = 'binary'
         return response
+
+    @action(detail=True, methods=['post'])
+    def favorite(self, request, pk):
+        return self.post_method_for_actions(
+            request=request, pk=pk, serializers=FavoriteSerializer)
+
+    @favorite.mapping.delete
+    def delete_favorite(self, request, pk):
+        return self.delete_method_for_actions(
+            request=request, pk=pk, model=Favorite)
 
 
 class IngredientViewSet(ModelViewSet):
