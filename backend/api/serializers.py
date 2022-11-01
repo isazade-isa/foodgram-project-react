@@ -177,11 +177,17 @@ class CreateRecipeSerializer(ModelSerializer):
         return data
 
     def validate_cooking(self, data):
-        if int(data['cooking_time']) <= 0:
+        if 0 < int(data['cooking_time']) < 1440:
+            return data
+        elif int(data['cooking_time']) <= 0:
             raise ValidationError(
                 'Время приготовления должно быть больше 0!'
             )
-        return data
+        elif int(data['cooking_time']) >= 1140:
+            raise ValidationError(
+                'Нельзя сутки стоять у плиты!'
+            )
+        
 
     # def validate_tags(self, data):
     #     if not int(data['tags']):
