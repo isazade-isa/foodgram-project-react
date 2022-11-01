@@ -181,7 +181,7 @@ class CreateRecipeSerializer(ModelSerializer):
             raise ValidationError(
                 'Время приготовления должно быть больше 0!'
             )
-        elif int(data['cooking_time']) >= 1140:
+        if int(data['cooking_time']) >= 1140:
             raise ValidationError(
                 'Нельзя сутки стоять у плиты!'
             )
