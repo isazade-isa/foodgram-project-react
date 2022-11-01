@@ -11,10 +11,9 @@ SECRET_KEY = (
     'my-secret-key-is-the-best-of-the-best-la-la-la-la!'
 )
 
-DEBUG = os.getenv('DEBUG_ENV')
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    '*',
     'localhost',
     '127.0.0.1',
     'backend',

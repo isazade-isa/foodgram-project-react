@@ -44,5 +44,5 @@
    ```
 
 Проект доступен: isaev.hopto.org
-e-mail: admin2@admin.ru
+e-mail: admin@admin.ru
 password: admin987654
