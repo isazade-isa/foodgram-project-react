@@ -1,8 +1,10 @@
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
@@ -15,7 +17,8 @@ from .serializers import (CartSerializer, CreateRecipeSerializer,
                           FavoriteSerializer, FollowListSerializer,
                           FollowSerializer, IngredientSerializer,
                           RecipeSerializer, TagSerializer)
-from recipes.models import Cart, Favorite, Ingredient, Recipe, Tag
+from recipes.models import (Cart, Favorite, Ingredient, IngredientRecipe,
+                            Recipe, Tag)
 from users.models import Follow, User
 
 
@@ -122,3 +125,24 @@ class IngredientViewSet(ModelViewSet):
 class TagViewSet(ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+
+@api_view(['GET'])
+def download_shopping_cart(request):
+    ingredient_list = "Cписок покупок:"
+    ingredients = IngredientRecipe.objects.filter(
+        recipe__shopping_cart__user=request.user
+    ).values(
+        'ingredient__name', 'ingredient__measurement_unit'
+    ).annotate(amount=Sum('amount'))
+    for num, i in enumerate(ingredients):
+        ingredient_list += (
+            f"\n{i['ingredient__name']} - "
+            f"{i['amount']} {i['ingredient__measurement_unit']}"
+        )
+        if num < ingredients.count() - 1:
+            ingredient_list += ', '
+    file = 'shopping_list'
+    response = HttpResponse(ingredient_list, 'Content-Type: application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{file}.pdf"'
+    return response
