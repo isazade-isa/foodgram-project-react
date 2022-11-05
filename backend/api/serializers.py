@@ -164,7 +164,7 @@ class CreateRecipeSerializer(ModelSerializer):
             ) for ingredient in ingredients
         ])
 
-    def validate_ingredients(self, data):
+    def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
         ingredients_list = []
         for ingredient in ingredients:
@@ -174,18 +174,38 @@ class CreateRecipeSerializer(ModelSerializer):
                     'Есть задублированные ингредиенты!'
                 )
             ingredients_list.append(ingredient_id)
-        return data
-
-    def validate_cooking(self, data):
-        if int(data['cooking_time']) <= 0:
+        if data['cooking_time'] <= 0:
             raise ValidationError(
                 'Время приготовления должно быть больше 0!'
             )
-        if int(data['cooking_time']) >= 1440:
+        if data['cooking_time'] >= 1440:
             raise ValidationError(
                 'Нельзя сутки стоять у плиты!'
             )
         return data
+
+    # def validate_ingredients(self, data):
+    #     ingredients = self.initial_data.get('ingredients')
+    #     ingredients_list = []
+    #     for ingredient in ingredients:
+    #         ingredient_id = ingredient['id']
+    #         if ingredient_id in ingredients_list:
+    #             raise ValidationError(
+    #                 'Есть задублированные ингредиенты!'
+    #             )
+    #         ingredients_list.append(ingredient_id)
+    #     return data
+
+    # def validate_cooking(self, data):
+    #     if int(data['cooking_time']) <= 0:
+    #         raise ValidationError(
+    #             'Время приготовления должно быть больше 0!'
+    #         )
+    #     if int(data['cooking_time']) >= 1440:
+    #         raise ValidationError(
+    #             'Нельзя сутки стоять у плиты!'
+    #         )
+    #     return data
 
     # def validate_tags(self, data):
     #     if not int(data['tags']):
@@ -231,12 +251,12 @@ class RecipeShortInfo(ModelSerializer):
 
 class CartSerializer(ModelSerializer):
     class Meta:
-        fields = ('recipe', 'user')
+        fields = ['recipe', 'user']
         model = Cart
 
     def validate(self, data):
         request = self.context.get('request')
-        recipe = data.get('recipe')
+        recipe = data['recipe']
         if Cart.objects.filter(
             user=request.user, recipe=recipe
         ).exists():
@@ -317,13 +337,13 @@ class FollowSerializer(ModelSerializer):
 
     def validate(self, data):
         get_object_or_404(User, username=data['author'])
-        if self.context.get('request').user == data.get('author'):
+        if self.context.get('request').user == data['author']:
             raise ValidationError({
                 'errors': 'Нельзя подписаться на себя.'
             })
         if Follow.objects.filter(
                 user=self.context.get('request').user,
-                author=data.get('author')
+                author=data['author']
         ):
             raise ValidationError({
                 'errors': 'Уже подписан.'
