@@ -6,7 +6,7 @@ services:
     volumes:
       - db_value:/var/lib/postgresql/data/
     env_file:
-      - ../.env
+      - ../isa_backend/.env
 
   backend:
     image: zombi2004/foodgram-backend:latest
@@ -17,13 +17,10 @@ services:
     depends_on:
       - db
     env_file:
-      - ../.env
+      - ../isa_backend/.env
 
   frontend:
     image: zombi2004/foodgram-frontend:latest
-    # build:
-    #   context: ../isa_backend/foodgram-project-react/frontend
-    #   dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
