@@ -184,31 +184,8 @@ class CreateRecipeSerializer(ModelSerializer):
             )
         return data
 
-    # def validate_ingredients(self, data):
-    #     ingredients = self.initial_data.get('ingredients')
-    #     ingredients_list = []
-    #     for ingredient in ingredients:
-    #         ingredient_id = ingredient['id']
-    #         if ingredient_id in ingredients_list:
-    #             raise ValidationError(
-    #                 'Есть задублированные ингредиенты!'
-    #             )
-    #         ingredients_list.append(ingredient_id)
-    #     return data
-
-    # def validate_cooking(self, data):
-    #     if int(data['cooking_time']) <= 0:
-    #         raise ValidationError(
-    #             'Время приготовления должно быть больше 0!'
-    #         )
-    #     if int(data['cooking_time']) >= 1440:
-    #         raise ValidationError(
-    #             'Нельзя сутки стоять у плиты!'
-    #         )
-    #     return data
-
     # def validate_tags(self, data):
-    #     if not int(data['tags']):
+    #     if not data['tags']:
     #         raise ValidationError(
     #             'Нужен хотя бы один тег для рецепта!')
     #     return data
