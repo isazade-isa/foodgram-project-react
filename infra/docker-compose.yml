@@ -7,6 +7,7 @@ services:
       - db_value:/var/lib/postgresql/data/
     env_file:
       - ../isa_backend/.env
+      # - ../backend/foodgram/.env
 
   backend:
     image: zombi2004/foodgram-backend:latest
@@ -18,6 +19,7 @@ services:
       - db
     env_file:
       - ../isa_backend/.env
+      # - ../backend/foodgram/.env
 
   frontend:
     image: zombi2004/foodgram-frontend:latest

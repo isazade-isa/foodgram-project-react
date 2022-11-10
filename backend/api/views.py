@@ -1,7 +1,6 @@
 from django.db.models import F, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.template.loader import render_to_string
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status
@@ -10,7 +9,6 @@ from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from weasyprint import HTML
 
 from .filters import IngredientSearchFilter, RecipeFilterSet
 from .pagination import CustomPagination
@@ -110,21 +108,33 @@ class RecipeViewSet(ModelViewSet):
         detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        shopping_list = IngredientRecipe.objects.filter(
-            recipe__cart__user=request.user
-        ).values(
-            name=F('ingredient__name'),
-            measurement_unit=F('ingredient__measurement_unit')
-        ).annotate(amount=Sum('amount')).values_list(
+        ingredients = IngredientRecipe.objects.filter(
+            recipe__shopping_cart__user=request.user
+        ).values_list(
             'ingredient__name', 'amount', 'ingredient__measurement_unit'
+        ).order_by(
+            'ingredient__name'
+        ).annotate(
+            ingredient_sum=Sum('amount')
         )
-        html_template = render_to_string('recipes/pdf_template.html',
-                                         {'ingredients': shopping_list})
-        html = HTML(string=html_template)
-        result = html.write_pdf()
-        response = HttpResponse(result, content_type='application/pdf;')
-        response['Content-Disposition'] = 'inline; filename=shopping_list.pdf'
-        response['Content-Transfer-Encoding'] = 'binary'
+        filename = 'shopping_list.txt'
+        ingredient_list = {}
+        for ingredient in ingredients:
+            name = ingredient[0]
+            ingredient_list[name] = {
+                'amount': ingredient[2],
+                'measurement_unit': ingredient[1]
+            }
+            shopping_cart = ["Список покупок\n\n"]
+            for num, i in ingredient_list.items():
+                shopping_cart.append(f'{num} - {i["measurement_unit"]}'
+                                     f'{i["amount"]}\n')
+        response = HttpResponse(
+            shopping_cart, content_type='text.txt; charset=utf-8'
+        )
+        response['Content-Disposition'] = (
+            f'attachment; filename={filename}.txt'
+        )
         return response
 
     @action(detail=True, methods=['post'])
@@ -148,24 +158,3 @@ class IngredientViewSet(ModelViewSet):
 class TagViewSet(ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-
-
-# @api_view(['GET'])
-# def download_shopping_cart(request):
-#     ingredient_list = "Cписок покупок:"
-#     ingredients = IngredientRecipe.objects.filter(
-#         recipe__shopping_cart__user=request.user
-#     ).values(
-#         'ingredient__name', 'ingredient__measurement_unit'
-#     ).annotate(amount=Sum('amount'))
-#     for num, i in enumerate(ingredients):
-#         ingredient_list += (
-#             f"\n{i['ingredient__name']} - "
-#             f"{i['amount']} {i['ingredient__measurement_unit']}"
-#         )
-#         if num < ingredients.count() - 1:
-#             ingredient_list += ', '
-#     file = 'shopping_list'
-#     response = HttpResponse(ingredient_list, 'Content-Type: application/pdf')
-#     response['Content-Disposition'] = f'attachment; filename="{file}.pdf"'
-#     return response

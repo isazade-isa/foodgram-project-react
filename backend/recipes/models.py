@@ -8,22 +8,22 @@ User = get_user_model()
 
 class Tag(models.Model):
     """
-    Модель тeгов.
+    Модель тегов.
     """
     name = models.CharField(
         'Название тега',
-        unique=True,
         max_length=200,
-        db_index=True
+        db_index=True,
+        unique=True
     )
     color = ColorField(
+        format='hex',
         verbose_name='HEX-код цвета',
-        unique=True,
-        format='hex'
+        unique=True
     )
     slug = models.SlugField(
-        verbose_name='Slug',
         max_length=200,
+        verbose_name='Slug',
         unique=True
     )
 
@@ -50,16 +50,23 @@ class Ingredient(models.Model):
     )
 
     class Meta:
+        ordering = ['name']
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='ingredient_name_unit_unique'
+            )
+        ]
 
-    def __str__(self):
-        return f'{self.name}, {self.measurement_unit}'
+    # def __str__(self):
+    #     return f'{self.name}, {self.measurement_unit}'
 
 
 class Recipe(models.Model):
     """
-    Модель рецептов.
+    Моодель рецептов.
     """
     author = models.ForeignKey(
         User,
@@ -71,8 +78,8 @@ class Recipe(models.Model):
         max_length=200
     )
     image = models.ImageField(
-        'Фото',
         blank=False,
+        verbose_name='Фото',
         upload_to='recipes/images'
     )
     text = models.TextField(
@@ -134,7 +141,6 @@ class IngredientRecipe(models.Model):
     )
 
     class Meta:
-        default_related_name = 'ingridients_recipe'
         constraints = (
             models.UniqueConstraint(
                 fields=('recipe', 'ingredient',),
@@ -184,15 +190,17 @@ class Cart(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
+        related_name='shopping_cart',
     )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        related_name='shopping_cart',
     )
 
     class Meta:
         verbose_name = 'Рецепт в корзине'
-        verbose_name_plural = 'Рецепты в корзине'
+        verbose_name_plural = 'Корзина рецептов'
         constraints = (
             models.UniqueConstraint(
                 fields=('user', 'recipe'),
