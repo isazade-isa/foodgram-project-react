@@ -1,4 +1,4 @@
-from django.db.models import F, Sum
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -111,31 +111,24 @@ class RecipeViewSet(ModelViewSet):
         ingredients = IngredientRecipe.objects.filter(
             recipe__shopping_cart__user=request.user
         ).values_list(
-            ingredient=F('ingredient__name'),
-            measure=F('ingredient__measurement_unit')
+            'ingredient__name', 'amount', 'ingredient__measurement_unit'
         ).order_by(
             'ingredient__name'
         ).annotate(
             ingredient_sum=Sum('amount')
         )
         filename = 'shopping_list.txt'
-        shopping_cart = ('Список покупок для:\n\n')
-        for i in ingredients:
-            shopping_cart += (
-                f'{i["ingredient"]} - {i["ingredient_sum"]} {i["measure"]}\n'
-            )
-        shopping_cart += '\n\nПосчитано в Foodgram'
-        # ingredient_list = {}
-        # for ingredient in ingredients:
-        #     name = ingredient[0]
-        #     ingredient_list[name] = {
-        #         'amount': ingredient[2],
-        #         'measurement_unit': ingredient[1]
-        #     }
-        #     shopping_cart = ["Список покупок\n\n"]
-        #     for num, i in ingredient_list.items():
-        #         shopping_cart.append(f'{num} - {i["measurement_unit"]}'
-        #                              f'{i["amount"]}\n')
+        ingredient_list = {}
+        for ingredient in ingredients:
+            name = ingredient[0]
+            ingredient_list[name] = {
+                'amount': ingredient[2],
+                'measurement_unit': ingredient[1]
+            }
+            shopping_cart = ["Список покупок\n\n"]
+            for num, i in ingredient_list.items():
+                shopping_cart.append(f'{num} - {i["measurement_unit"]}'
+                                     f'{i["amount"]}\n')
         response = HttpResponse(
             shopping_cart, content_type='text.txt; charset=utf-8'
         )
