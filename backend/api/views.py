@@ -125,7 +125,7 @@ class RecipeViewSet(ModelViewSet):
                 'ingredient__measurement_unit'
             )
             shopping_cart[name] = count
-            data = ''
+            data = 'Список покупок:\n\n'
             for num, i in shopping_cart.items():
                 data += f'{num} - {i}\n'
         response = HttpResponse(
