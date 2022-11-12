@@ -106,7 +106,7 @@ class RecipeViewSet(ModelViewSet):
         detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        return download_shopping_cart()
+        return download_shopping_cart(self, request)
 
     @action(detail=True, methods=['post'])
     def favorite(self, request, pk):
