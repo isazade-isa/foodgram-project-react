@@ -17,13 +17,13 @@ class Tag(models.Model):
         unique=True
     )
     color = ColorField(
+        'HEX-код цвета',
         format='hex',
-        verbose_name='HEX-код цвета',
         unique=True
     )
     slug = models.SlugField(
+        'Slug',
         max_length=200,
-        verbose_name='Slug',
         unique=True
     )
 
@@ -52,12 +52,6 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        # constraints = [
-        #     models.UniqueConstraint(
-        #         fields=['name', 'measurement_unit'],
-        #         name='ingredient_name_unit_unique'
-        #     )
-        # ]
 
     def __str__(self):
         return f'{self.name}, {self.measurement_unit}'
@@ -77,8 +71,8 @@ class Recipe(models.Model):
         max_length=200
     )
     image = models.ImageField(
+        'Фото',
         blank=False,
-        verbose_name='Фото',
         upload_to='recipes/images'
     )
     text = models.TextField(
@@ -103,7 +97,7 @@ class Recipe(models.Model):
         verbose_name='Время приготовления, мин.'
     )
     pub_date = models.DateTimeField(
-        verbose_name='Дата публикации',
+        'Дата публикации',
         auto_now_add=True
     )
 
@@ -195,7 +189,6 @@ class Cart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        # related_name='shopping_cart',
     )
 
     class Meta:
