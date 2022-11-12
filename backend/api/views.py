@@ -119,9 +119,9 @@ class RecipeViewSet(ModelViewSet):
         )
         filename = 'shopping_list.txt'
         shopping_cart = {}
-        for ingredient in ingredients:
-            name = ingredient.get('ingredient__name')
-            count = str(ingredient.get('ingredient_sum')) + ' ' + ingredient.get(
+        for item in ingredients:
+            name = item.get('ingredient__name')
+            count = str(item.get('ingredient_sum')) + ' ' + item.get(
                 'ingredient__measurement_unit'
             )
             shopping_cart[name] = count
