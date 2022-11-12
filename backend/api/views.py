@@ -108,29 +108,38 @@ class RecipeViewSet(ModelViewSet):
         detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
+        ingredient_list = "Cписок покупок:"
         ingredients = IngredientRecipe.objects.filter(
             recipe__shopping_cart__user=request.user
-        ).values_list(
-            'ingredient__name', 'amount', 'ingredient__measurement_unit'
-        ).order_by(
-            'ingredient__name'
+        ).values(
+            'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(
             ingredient_sum=Sum('amount')
         )
+        for num, i in enumerate(ingredients):
+            ingredient_list += (
+                f'\n{i["ingredient__name"]} - '
+                f'{i["amount"]} {i["ingredient__measurement_unit"]}'
+            )
+            if num < ingredients.count() - 1:
+                ingredient_list += ', '
         filename = 'shopping_list.txt'
-        ingredient_list = {}
-        for ingredient in ingredients:
-            name = ingredient[0]
-            ingredient_list[name] = {
-                'amount': ingredient[2],
-                'measurement_unit': ingredient[1]
-            }
-            shopping_cart = ["Список покупок\n\n"]
-            for num, i in ingredient_list.items():
-                shopping_cart.append(f'{num} - {i["measurement_unit"]}'
-                                     f'{i["amount"]}\n')
+        # ingredient_list = {}
+        # for ingredient in ingredients:
+        #     name = ingredient[0]
+        #     ingredient_list[name] = {
+        #         'amount': ingredient[2],
+        #         'measurement_unit': ingredient[1]
+        #     }
+        #     shopping_cart = ["Список покупок\n\n"]
+        #     for num, i in ingredient_list.items():
+        #         shopping_cart.append(f'{num} - {i["measurement_unit"]}'
+        #                              f'{i["amount"]}\n')
+        # response = HttpResponse(
+        #     shopping_cart, content_type='text.txt; charset=utf-8'
+        # )
         response = HttpResponse(
-            shopping_cart, content_type='text.txt; charset=utf-8'
+            ingredient_list, content_type='text.txt; charset=utf-8'
         )
         response['Content-Disposition'] = (
             f'attachment; filename={filename}.txt'
