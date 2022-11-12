@@ -105,7 +105,7 @@ class RecipeViewSet(ModelViewSet):
     @action(
         detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
     )
-    def shopping_list():
+    def download_shopping_cart():
         return download_shopping_cart()
 
     @action(detail=True, methods=['post'])
