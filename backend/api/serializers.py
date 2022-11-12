@@ -186,6 +186,9 @@ class CreateRecipeSerializer(ModelSerializer):
 
     @atomic
     def create(self, validated_data):
+        """
+        Создание рецепта.
+        """
         request = self.context.get('request')
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
@@ -199,6 +202,9 @@ class CreateRecipeSerializer(ModelSerializer):
 
     @atomic
     def update(self, instance, validated_data):
+        """
+        Изменение рецепта.
+        """
         ingredients = validated_data.pop('ingredients')
         recipe = instance
         IngredientRecipe.objects.filter(recipe=recipe).delete()
@@ -222,7 +228,7 @@ class RecipeShortInfo(ModelSerializer):
 
 class CartSerializer(ModelSerializer):
     class Meta:
-        fields = ['recipe', 'user']
+        fields = ('recipe', 'user')
         model = Cart
 
     def validate(self, data):
