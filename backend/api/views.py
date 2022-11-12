@@ -108,22 +108,22 @@ class RecipeViewSet(ModelViewSet):
         detail=False, methods=['get'], permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        ingredient_list = "Cписок покупок:"
         ingredients = IngredientRecipe.objects.filter(
             recipe__shopping_cart__user=request.user
-        ).values(
-            'ingredient__name', 'ingredient__measurement_unit'
+        ).values_list(
+            'ingredient__name', 'amount', 'ingredient__measurement_unit'
+        ).order_by(
+            'ingredient__name'
         ).annotate(
             ingredient_sum=Sum('amount')
         )
-        for num, i in enumerate(ingredients):
-            ingredient_list += (
-                f'\n{i["ingredient__name"]} - '
-                f'{i["amount"]} {i["ingredient__measurement_unit"]}'
-            )
-            if num < ingredients.count() - 1:
-                ingredient_list += ', '
         filename = 'shopping_list.txt'
+        shopping_cart = ('Список покупок для:\n\n')
+        for i in ingredients:
+            shopping_cart += (
+                f'{i["ingredient"]}: {i["amount"]} {i["measure"]}\n'
+            )
+        shopping_cart += '\n\nПосчитано в Foodgram'
         # ingredient_list = {}
         # for ingredient in ingredients:
         #     name = ingredient[0]
@@ -135,11 +135,8 @@ class RecipeViewSet(ModelViewSet):
         #     for num, i in ingredient_list.items():
         #         shopping_cart.append(f'{num} - {i["measurement_unit"]}'
         #                              f'{i["amount"]}\n')
-        # response = HttpResponse(
-        #     shopping_cart, content_type='text.txt; charset=utf-8'
-        # )
         response = HttpResponse(
-            ingredient_list, content_type='text.txt; charset=utf-8'
+            shopping_cart, content_type='text.txt; charset=utf-8'
         )
         response['Content-Disposition'] = (
             f'attachment; filename={filename}.txt'
