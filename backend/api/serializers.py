@@ -174,7 +174,6 @@ class CreateRecipeSerializer(ModelSerializer):
                     'Есть задублированные ингредиенты!'
                 )
             ingredients_list.append(ingredient_id)
-        return data
 
     def validate(self, data):
         if int(data['cooking_time']) <= 0:
