@@ -164,25 +164,70 @@ class CreateRecipeSerializer(ModelSerializer):
             ) for ingredient in ingredients
         ])
 
-    def validate(self, data):
-        ingredients = self.initial_data.get('ingredients')
-        ingredients_list = []
+    # def validate(self, data):
+    #     ingredients = self.initial_data.get('ingredients')
+    #     ingredients_list = []
+    #     for ingredient in ingredients:
+    #         ingredient_id = ingredient['id']
+    #         if ingredient_id in ingredients_list:
+    #             raise ValidationError(
+    #                 'Есть задублированные ингредиенты!'
+    #             )
+    #         ingredients_list.append(ingredient_id)
+    #     return data
+
+    def validate_ingredients(self, ingredients):
+        if not ingredients:
+            raise ValidationError('Укажите ингредиенты!')
+        ingredients_list = list()
         for ingredient in ingredients:
-            ingredient_id = ingredient['id']
-            if ingredient_id in ingredients_list:
+            ingredient_obj = ingredient.get('id')
+            amount = ingredient.get('amount')
+            if amount <= 0:
+                raise ValidationError(
+                    'Убедитесь, что значение количества '
+                    f'ингредиента "{ingredient_obj.name}" больше 0'
+                )
+            if amount > 2000:
+                raise ValidationError(
+                    'Убедитесь, что значение количества '
+                    f'ингредиента "{ingredient_obj.name}" меньше 2000'
+                )
+            if ingredient_obj.id in ingredients_list:
                 raise ValidationError(
                     'Есть задублированные ингредиенты!'
                 )
-            ingredients_list.append(ingredient_id)
-        if int(data['cooking_time']) <= 0:
+            ingredients_list.append(ingredient_obj.id)
+        return ingredients
+
+    def validate_cooking_time(self, value):
+        if value <= 0:
             raise ValidationError(
                 'Время приготовления должно быть больше 0!'
             )
-        if int(data['cooking_time']) >= 1440:
+        if value >= 1440:
             raise ValidationError(
                 'Нельзя сутки стоять у плиты!'
             )
-        return data
+        return value
+
+    # def validate_cooking_time(self, data):
+    #     if int(data['cooking_time']) <= 0:
+    #         raise ValidationError(
+    #             'Время приготовления должно быть больше 0!'
+    #         )
+    #     if int(data['cooking_time']) >= 1440:
+    #         raise ValidationError(
+    #             'Нельзя сутки стоять у плиты!'
+    #         )
+    #     return data
+
+    def validate_tags(self, tags):
+        if len(tags) > len(set(tags)):
+            raise ValidationError(
+                'Повторяющихся тегов в одном рецепе быть не должно!'
+            )
+        return tags
 
     @atomic
     def create(self, validated_data):
