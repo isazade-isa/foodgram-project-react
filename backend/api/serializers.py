@@ -257,7 +257,7 @@ class FavoriteSerializer(ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        recipe = data['recipe']
+        recipe = data.get('recipe')
         if Favorite.objects.filter(user=request.user, recipe=recipe).exists():
             raise ValidationError({
                 'errors': 'Уже есть в избранном.'
@@ -314,7 +314,7 @@ class FollowSerializer(ModelSerializer):
 
     def validate(self, data):
         get_object_or_404(User, username=data['author'])
-        if self.context['request'].user == data['author']:
+        if self.context.get('request').user == data['author']:
             raise ValidationError({
                 'errors': 'Ты не можешь подписаться на себя.'
             })
