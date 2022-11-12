@@ -110,27 +110,26 @@ class RecipeViewSet(ModelViewSet):
     def download_shopping_cart(self, request):
         ingredients = IngredientRecipe.objects.filter(
             recipe__shopping_cart__user=request.user
-        ).values_list(
-            'ingredient__name', 'amount', 'ingredient__measurement_unit'
+        ).values(
+            'ingredient__name', 'ingredient__measurement_unit'
         ).order_by(
             'ingredient__name'
         ).annotate(
             ingredient_sum=Sum('amount')
         )
         filename = 'shopping_list.txt'
-        ingredient_list = {}
+        shopping_cart = {}
         for ingredient in ingredients:
-            name = ingredient[0]
-            ingredient_list[name] = {
-                'amount': ingredient[2],
-                'measurement_unit': ingredient[1]
-            }
-            shopping_cart = ["Список покупок:\n\n"]
-            for num, i in ingredient_list.items():
-                shopping_cart.append(f'{num} - {i["measurement_unit"]}'
-                                     f'{i["amount"]}\n')
+            name = ingredient.get('ingredient__name')
+            count = str(ingredient.get('ingredient_sum')) + ' ' + ingredient.get(
+                'ingredient__measurement_unit'
+            )
+            shopping_cart[name] = count
+            data = ''
+            for num, i in shopping_cart.items():
+                data += f'{num} - {i}\n'
         response = HttpResponse(
-            shopping_cart, content_type='text.txt; charset=utf-8'
+            data, content_type='text.txt; charset=utf-8'
         )
         response['Content-Disposition'] = (
             f'attachment; filename={filename}.txt'
