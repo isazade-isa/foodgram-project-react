@@ -233,7 +233,7 @@ class CartSerializer(ModelSerializer):
 
     def validate(self, data):
         request = self.context.get('request')
-        recipe = data['recipe']
+        recipe = data.get('recipe')
         if Cart.objects.filter(
             user=request.user, recipe=recipe
         ).exists():
