@@ -164,41 +164,17 @@ class CreateRecipeSerializer(ModelSerializer):
             ) for ingredient in ingredients
         ])
 
-    # def validate(self, data):
-    #     ingredients = self.initial_data.get('ingredients')
-    #     ingredients_list = []
-    #     for ingredient in ingredients:
-    #         ingredient_id = ingredient['id']
-    #         if ingredient_id in ingredients_list:
-    #             raise ValidationError(
-    #                 'Есть задублированные ингредиенты!'
-    #             )
-    #         ingredients_list.append(ingredient_id)
-    #     return data
-
-    def validate_ingredients(self, ingredients):
-        if not ingredients:
-            raise ValidationError('Укажите ингредиенты!')
-        ingredients_list = list()
+    def validate(self, data):
+        ingredients = self.initial_data.get('ingredients')
+        ingredients_list = []
         for ingredient in ingredients:
-            ingredient_obj = ingredient.get('id')
-            amount = ingredient.get('amount')
-            if amount <= 0:
-                raise ValidationError(
-                    'Убедитесь, что значение количества '
-                    f'ингредиента "{ingredient_obj.name}" больше 0'
-                )
-            if amount > 2000:
-                raise ValidationError(
-                    'Убедитесь, что значение количества '
-                    f'ингредиента "{ingredient_obj.name}" меньше 2000'
-                )
-            if ingredient_obj.id in ingredients_list:
+            ingredient_id = ingredient['id']
+            if ingredient_id in ingredients_list:
                 raise ValidationError(
                     'Есть задублированные ингредиенты!'
                 )
-            ingredients_list.append(ingredient_obj.id)
-        return ingredients
+            ingredients_list.append(ingredient_id)
+        return data
 
     def validate_cooking_time(self, value):
         if value <= 0:
