@@ -164,7 +164,7 @@ class CreateRecipeSerializer(ModelSerializer):
             ) for ingredient in ingredients
         ])
 
-    def validate_ingredients(self, data):
+    def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
         ingredients_list = []
         for ingredient in ingredients:
@@ -174,9 +174,6 @@ class CreateRecipeSerializer(ModelSerializer):
                     'Есть задублированные ингредиенты!'
                 )
             ingredients_list.append(ingredient_id)
-        return data
-
-    def validate_cooking_time(self, data):
         if int(data['cooking_time']) <= 0:
             raise ValidationError(
                 'Время приготовления должно быть больше 0!'
