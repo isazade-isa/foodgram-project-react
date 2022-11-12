@@ -198,12 +198,12 @@ class CreateRecipeSerializer(ModelSerializer):
     #         )
     #     return data
 
-    def validate_tags(self, tags):
-        if len(tags) > len(set(tags)):
-            raise ValidationError(
-                'Повторяющихся тегов в одном рецепе быть не должно!'
-            )
-        return tags
+    # def validate_tags(self, tags):
+    #     if len(tags) > len(set(tags)):
+    #         raise ValidationError(
+    #             'Повторяющихся тегов в одном рецепе быть не должно!'
+    #         )
+    #     return tags
 
     @atomic
     def create(self, validated_data):
