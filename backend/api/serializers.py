@@ -174,27 +174,37 @@ class CreateRecipeSerializer(ModelSerializer):
                     'Есть задублированные ингредиенты!'
                 )
             ingredients_list.append(ingredient_id)
-        return data
-
-    def validate_cooking_time(self, cooking_time):
-        cooking_time = self.initial_data.get('ingredients')
-        if int(cooking_time) <= 0:
+        if int(data['cooking_time']) <= 0:
             raise ValidationError(
                 'Время приготовления должно быть больше 0!'
             )
-        if int(cooking_time) >= 1440:
+        if int(data['cooking_time']) >= 1440:
             raise ValidationError(
                 'Нельзя сутки стоять у плиты!'
             )
-        return cooking_time
+        return data
 
-    def validate_tags(self, tags):
-        tags = self.initial_data.get('tags')
-        if len(tags) > len(set(tags)):
-            raise ValidationError(
-                'Повторяющихся тегов в одном рецепе быть не должно!'
-            )
-        return tags
+    # Не работает в таком виде
+    # def validate_cooking_time(self, cooking_time):
+    #     cooking_time = self.initial_data.get('ingredients')
+    #     if int(cooking_time) <= 0:
+    #         raise ValidationError(
+    #             'Время приготовления должно быть больше 0!'
+    #         )
+    #     if int(cooking_time) >= 1440:
+    #         raise ValidationError(
+    #             'Нельзя сутки стоять у плиты!'
+    #         )
+    #     return cooking_time
+
+    # Пятисотит при таком раскладе((
+    # def validate_tags(self, tags):
+    #     tags = self.initial_data.get('tags')
+    #     if len(tags) > len(set(tags)):
+    #         raise ValidationError(
+    #             'Повторяющихся тегов в одном рецепе быть не должно!'
+    #         )
+    #     return tags
 
     @atomic
     def create(self, validated_data):
