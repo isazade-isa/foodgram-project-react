@@ -11,7 +11,7 @@ SECRET_KEY = (
     'my-secret-key-is-the-best-of-the-best-la-la-la-la!'
 )
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     'localhost',
