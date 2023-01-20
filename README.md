@@ -42,5 +42,3 @@
    python manage.py collectstatic --no-input
    python manage.py load_ingredients
    ```
-
-Проект доступен: isaev.hopto.org
